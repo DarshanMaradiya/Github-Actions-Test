@@ -33,7 +33,7 @@ jobs:
           mysql database: 'OrderManagementSystem'
           mysql user: 'root'
           mysql password: 'password'
-      - run: echo "create database `OrderManagementSystem`" | mysql -u 'root' -p 'password'
+      - run: echo "create database `OrderManagementSystem`" | echo "password" | mysql -u 'root' -p stdin
       - name: Build with Maven - discovery-server-app
         run: mvn -B package --file discovery-server-app/pom.xml
       - name: Build with Maven - address-app
