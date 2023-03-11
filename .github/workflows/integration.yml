@@ -38,11 +38,11 @@ jobs:
       #- run: mysql -u 'root' -p 'password' -e "create database OrderManagementSystem"
       - name: Build with Maven - discovery-server-app
         run: mvn -B package --file discovery-server-app/pom.xml
-      - name: Build with Maven - address-app
-        run: mvn -B package --file address-app/pom.xml
       - name: Starting discovery-server
         run: java -jar discovery-server-app/target/discovery-server-app-0.0.1-SNAPSHOT.jar &
       - run: sleep 10
+      - name: Build with Maven - address-app
+        run: mvn -B package --file address-app/pom.xml
       - name: Starting address-app
         run: java -jar address-app/target/address-app-0.0.1-SNAPSHOT.jar &
       - run: sleep 10
@@ -55,4 +55,4 @@ jobs:
       - name: Shutting down discovery server
         run: kill -9 `lsof -i:8761 -t`
       - name: Shutting down address-app
-        run: kill -9 `lsof -i:8761 -t`
+        run: kill -9 `lsof -i:8082 -t`
