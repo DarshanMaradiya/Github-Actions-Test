@@ -10,7 +10,7 @@ name: Integration
 
 on:
   push:
-    branches: [ "discovery-server-app2" ]
+    branches: [ "discovery-server-app3" ]
   pull_request:
     branches: [ "master" ]
 
