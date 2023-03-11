@@ -33,7 +33,7 @@ jobs:
         run: java -jar discovery-server-app/target/discovery-server-app-0.0.1-SNAPSHOT.jar &
       - run: sleep 10
       - name: Testing API endpoints of discovery-server
-        uses: matt-ball/newman-action@master
+      - uses: matt-ball/newman-action@master
           with:
             collection: Temp.postman_collection.json
       - run: sleep 5
