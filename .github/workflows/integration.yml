@@ -10,7 +10,7 @@ name: Integration
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "discovery-server-app3" ]
   pull_request:
     branches: [ "master" ]
 
@@ -27,9 +27,31 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
-      - name: Build with Maven
+      - name: Starting MySQL server
+        uses: mirromutth/mysql-action@v1.1
+        with:
+          mysql database: 'OrderManagementSystem'
+          mysql root password: 'password' # Required if "mysql user" is empty, default is empty. The root superuser password
+          mysql user: 'root'
+          mysql password: 'password'
+      - name: Build with Maven - discovery-server-app
         run: mvn -B package --file discovery-server-app/pom.xml
-
-      # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
-      - name: Update dependency graph
-        uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6
+      - name: Starting discovery-server
+        run: java -jar discovery-server-app/target/discovery-server-app-0.0.1-SNAPSHOT.jar &
+      - run: sleep 10
+      - name: Build with Maven - address-app
+        run: mvn -B package --file address-app/pom.xml
+      - name: Starting address-app
+        run: java -jar address-app/target/address-app-0.0.1-SNAPSHOT.jar &
+      - run: sleep 10
+      - name: Testing API endpoints of discovery-server & address-app
+        uses: matt-ball/newman-action@master
+        with:
+          collection: Temp.postman_collection.json
+          environment: Temp.postman_environment.json
+      - run: sleep 5
+      - name: Shutting down address-app
+        run: kill -9 `lsof -i:8082 -t`
+      - run: sleep 5
+      - name: Shutting down discovery server
+        run: kill -9 `lsof -i:8761 -t`
